@@ -8,6 +8,10 @@
 #define GPIO_FUNCTIONS_H
 #include "linux/gpio.h"
 #include "sys/ioctl.h"
+#include <errno.h>
+#include <string.h>
+#include <fcntl.h>
+#include <stdio.h>
 
 // configure GPIO as either read or write with consumer label
 struct gpiohandle_request gpio_setup(unsigned int gpio_num, char *consumer_label, char gpio_mode);

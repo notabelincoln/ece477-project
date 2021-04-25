@@ -6,10 +6,6 @@
  * Provides code for configuring GPIOs
  */
 #include "gpio_functions.h"
-#include <errno.h>
-#include <string.h>
-#include <fcntl.h>
-#include <stdio.h>
 
 // configure GPIO as either read or write with consumer label
 struct gpiohandle_request gpio_setup(unsigned int gpio_num, char *consumer_label, char gpio_mode)
@@ -22,7 +18,7 @@ struct gpiohandle_request gpio_setup(unsigned int gpio_num, char *consumer_label
 	memset(&req, 0, sizeof(struct gpiohandle_request));
 
 	fd = open("/dev/gpiochip0",O_RDWR);
-	if (fd < 0) printf("Error (%u) open %s\n",strerror(errno));
+	if (fd < 0) printf("Error (%u) open %s\n",gpio_num,strerror(errno));
 
 
 	/* configure basic gpio attributes */
@@ -35,7 +31,7 @@ struct gpiohandle_request gpio_setup(unsigned int gpio_num, char *consumer_label
 		req.default_values[0] = 0;
 
 	rv = ioctl(fd, GPIO_GET_LINEHANDLE_IOCTL, &req);
-	if (rv < 0) printf("Error (%u) ioctl %s\n",strerror(errno));
+	if (rv < 0) printf("Error (%u) ioctl %s\n",gpio_num,strerror(errno));
 
 	return req;
 }
@@ -51,7 +47,7 @@ int gpio_read(struct gpiohandle_request *req)
 
 	/* read data from gpio pin */
 	rv = ioctl(req->fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &data);
-	if (rv < 0) return errno;
+	if (rv < 0) printf("Error ioctl %s\n",strerror(errno));
 
 	return data.values[0];
 }
@@ -65,8 +61,7 @@ int gpio_write(struct gpiohandle_request *req, int set_value)
 	// write value to gpio pin
 	data.values[0] = set_value;
 	rv = ioctl(req->fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &data);
-	if (rv < 0) 
-		return errno;
+	if (rv < 0) printf("Error ioctl %s\n",strerror(errno));
 
 	return 0;
 }
