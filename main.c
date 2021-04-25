@@ -4,7 +4,6 @@
  * main.c
  */
 #include "gpio_functions.h"
-#include <stdio.h>
 #include <unistd.h>
 #include <time.h>
 
@@ -28,7 +27,7 @@ int main(int argc, char **argv)
 		while (gpio_read(&ireq));
 		clock_final = clock();
 		pulse_width = (double)(clock_final - clock_initial)/CLOCKS_PER_SEC*1000000;
-		printf("distance = %lf cm", pulse_width / 58);
+		printf("distance = %04.1lf cm\n", pulse_width / 58);
 		usleep(1000000 - pulse_width);
 	}
 
