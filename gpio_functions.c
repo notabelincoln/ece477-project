@@ -47,7 +47,7 @@ int gpio_read(struct gpiohandle_request *req)
 
 	/* read data from gpio pin */
 	rv = ioctl(req->fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &data);
-	if (rv < 0) printf("Error ioctl %s\n",strerror(errno));
+	if (rv < 0) printf("Error ioctl %s\n", strerror(errno));
 
 	return data.values[0];
 }
@@ -61,7 +61,7 @@ int gpio_write(struct gpiohandle_request *req, int set_value)
 	// write value to gpio pin
 	data.values[0] = set_value;
 	rv = ioctl(req->fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &data);
-	if (rv < 0) printf("Error ioctl %s\n",strerror(errno));
+	if (rv < 0) printf("Error ioctl %s\n", strerror(errno));
 
 	return 0;
 }
