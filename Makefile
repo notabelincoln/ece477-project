@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -g -O2 -Wall
 
-all:	main gpio_functions
+all:	main gpio_functions.o
 
 main:	main.o gpio_functions.o
 	$(CC) $(LFLAGS) -o project main.o gpio_functions.o
@@ -13,4 +13,4 @@ gpio_functions.o:	gpio_functions.c
 	$(CC) $(CFLAGS) -c gpio_functions.c
 
 clean:	
-	rm -f *~ *.o main
+	rm -f *~ *.o project
