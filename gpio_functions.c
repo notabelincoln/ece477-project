@@ -9,9 +9,10 @@
 #include <errno.h>
 #include <string.h>
 #include <fcntl.h>
+#include <stdio.h>
 
 // configure GPIO as either read or write with consumer label
-int gpio_setup(unsigned int gpio_num, char *consumer_label, char gpio_mode)
+struct gpiohandle_request gpio_setup(unsigned int gpio_num, char *consumer_label, char gpio_mode)
 {
 	/* variables for handling GPIO */
 	int fd, rv;
@@ -21,8 +22,8 @@ int gpio_setup(unsigned int gpio_num, char *consumer_label, char gpio_mode)
 	memset(&req, 0, sizeof(struct gpiohandle_request));
 
 	fd = open("/dev/gpiochip0",O_RDWR);
-	if (fd < 0)
-		return errno;
+	if (fd < 0) printf("Error (%u) open %s\n",strerror(errno));
+
 
 	/* configure basic gpio attributes */
 	req.flags = gpio_mode;
@@ -34,12 +35,13 @@ int gpio_setup(unsigned int gpio_num, char *consumer_label, char gpio_mode)
 		req.default_values[0] = 0;
 
 	rv = ioctl(fd, GPIO_GET_LINEHANDLE_IOCTL, &req);
-	if (rv < 0)
-		return errno;
+	if (rv < 0) printf("Error (%u) ioctl %s\n",strerror(errno));
+
+	return req;
 }
 
 // read from gpio pin
-int gpio_read(struct gpiohandle_request req)
+int gpio_read(struct gpiohandle_request *req)
 {
 	int rv;
 	struct gpiohandle_data data;
@@ -48,21 +50,21 @@ int gpio_read(struct gpiohandle_request req)
 	memset(&data, 0, sizeof(data));
 
 	/* read data from gpio pin */
-	rv = ioctl(req.fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &data);
+	rv = ioctl(req->fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &data);
 	if (rv < 0) return errno;
 
 	return data.values[0];
 }
 
 // write to gpio pin
-int gpio_write(struct gpiohandle_request req, int set_value)
+int gpio_write(struct gpiohandle_request *req, int set_value)
 {
 	int rv;
 	struct gpiohandle_data data;
 
 	// write value to gpio pin
 	data.values[0] = set_value;
-	rv = ioctl(req.fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &data);
+	rv = ioctl(req->fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &data);
 	if (rv < 0) 
 		return errno;
 
