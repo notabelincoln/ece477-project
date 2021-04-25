@@ -26,14 +26,14 @@ int main(int argc, char **argv) {
 	req.lines = 1;
 	req.lineoffsets[0] = 18; // access GPIO18
 	req.default_values[0] = 0; // make gpio18 low by default
-	strcpy(req.consumer_label, "ECE471");
+	strcpy(req.consumer_label, "ECE477");
 	rv = ioctl(fd, GPIO_GET_LINEHANDLE_IOCTL, &req);
 	if (rv < 0) printf("Error ioctl %s\n", strerror(errno));
 
 	/* toggle LED every 0.5 seconds at rate of 1 hz */
 	while(1) {
 		data.values[0]=0;
-		rv = ioctl(req.fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &data);
+		rv = ioctl(req.fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &data);
 		if (rv < 0) printf("Error setting value %s\n", strerror(errno));
 		usleep(500000);
 
