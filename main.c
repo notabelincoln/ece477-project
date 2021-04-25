@@ -12,7 +12,6 @@ void pulse(struct gpiohandle_request req, unsigned int frequency, unsigned int d
 
 int main(int argc, char **argv)
 {
-	int gpiov;
 	struct gpiohandle_request ireq;
 	struct gpiohandle_request oreq;
 	clock_t clock_initial, clock_final;
@@ -29,10 +28,7 @@ int main(int argc, char **argv)
 		while (gpio_read(&ireq));
 		clock_final = clock();
 		pulse_width = (double)(clock_final - clock_initial)/CLOCKS_PER_SEC*1000000;
-		printf("distance = %lf cm, clock_initial = %lu, clock_final = %lu\n",
-				pulse_width / 58,
-				(long unsigned int)clock_initial,
-				(long unsigned int)clock_final);
+		printf("distance = %lf cm", pulse_width / 58);
 		usleep(1000000 - pulse_width);
 	}
 
